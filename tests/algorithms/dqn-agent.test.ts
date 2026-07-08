@@ -31,15 +31,17 @@ describe('DQNAgent', () => {
 
   describe('constructor', () => {
     it('initializes with starting epsilon', () => {
-      expect(agent.epsilon).toBe(0.5);
+      const internal = agent as unknown as { epsilon: number };
+      expect(internal.epsilon).toBe(0.5);
     });
 
     it('creates online and target networks with correct dimensions', () => {
       expect(agent.online).toBeDefined();
       expect(agent.target).toBeDefined();
-      // Both should be the same architecture (4 → 128 → 64 → 2)
-      const inShape = agent.online.model.inputs[0]!.shape;
-      const outShape = agent.online.model.outputs[0]!.shape;
+      // Cast to MLPQNetwork to inspect internal model — same shape as factory default
+      const online = agent.online as unknown as { model: { inputs: Array<{ shape: number[] | null }>; outputs: Array<{ shape: number[] | null }> } };
+      const inShape = online.model.inputs[0]!.shape;
+      const outShape = online.model.outputs[0]!.shape;
       expect(inShape).toEqual([null, 4]);
       expect(outShape).toEqual([null, 2]);
     });
@@ -127,7 +129,7 @@ describe('DQNAgent', () => {
     });
 
     it('decays epsilon after training step', async () => {
-      const initialEpsilon = agent.epsilon;
+      const initialEpsilon = (agent as unknown as { epsilon: number }).epsilon;
       for (let i = 0; i < 10; i++) {
         agent.remember(
           new Float32Array([i, i, i, i]),
@@ -138,7 +140,7 @@ describe('DQNAgent', () => {
         );
       }
       await agent.trainStep();
-      expect(agent.epsilon).toBeLessThan(initialEpsilon);
+      expect((agent as unknown as { epsilon: number }).epsilon).toBeLessThan(initialEpsilon);
     });
 
     it('clamps epsilon at epsilonEnd', async () => {
@@ -155,7 +157,8 @@ describe('DQNAgent', () => {
       for (let i = 0; i < 50; i++) {
         await agent.trainStep();
       }
-      expect(agent.epsilon).toBeCloseTo(agent.epsilonEnd, 5);
+      const internal = agent as unknown as { epsilon: number };
+      expect(internal.epsilon).toBeCloseTo(agent.epsilonEnd, 5);
     });
 
     it('increments step counter', async () => {

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browser RL Showcase — DQN Trainer</title>
+    <link rel="stylesheet" href="/src/ui/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Browser RL Showcase</h1>
+      <p class="subtitle">
+        DQN agent training on CartPole-v1, in your browser. Powered by
+        TensorFlow.js.
+      </p>
+    </header>
+
+    <main>
+      <section id="controls" class="panel">
+        <h2>Controls</h2>
+        <div class="control-group">
+          <label for="envSelect">Environment</label>
+          <select id="envSelect" disabled>
+            <option value="cartpole-v1">CartPole-v1</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="hyperparamPreset">Hyperparameters</label>
+          <select id="hyperparamPreset">
+            <option value="default">Default (DQN paper)</option>
+            <option value="fast">Fast (less exploration)</option>
+            <option value="explore">Exploration-heavy</option>
+          </select>
+        </div>
+        <div class="control-group buttons">
+          <button id="startBtn" type="button" class="primary">Start training</button>
+          <button id="stopBtn" type="button" class="secondary" disabled>Stop</button>
+          <button id="evalBtn" type="button" class="secondary">Run eval episode</button>
+          <button id="resetBtn" type="button" class="ghost">Reset agent</button>
+        </div>
+        <div class="control-group">
+          <label>Speed</label>
+          <input id="speedSlider" type="range" min="1" max="20" value="1" />
+          <span id="speedLabel">1×</span>
+        </div>
+      </section>
+
+      <section id="liveStats" class="panel">
+        <h2>Live</h2>
+        <dl class="stats-grid">
+          <dt>Episode</dt>
+          <dd id="episodeStat">0</dd>
+          <dt>Step</dt>
+          <dd id="stepStat">0</dd>
+          <dt>Last reward</dt>
+          <dd id="lastRewardStat">0</dd>
+          <dt>Episode length</dt>
+          <dd id="episodeLengthStat">0</dd>
+          <dt>Buffer</dt>
+          <dd id="bufferStat">0 / 10000</dd>
+          <dt>Epsilon</dt>
+          <dd id="epsilonStat">1.000</dd>
+          <dt>Loss</dt>
+          <dd id="lossStat">—</dd>
+          <dt>Mean Q</dt>
+          <dd id="meanQStat">—</dd>
+        </dl>
+      </section>
+
+      <section id="chartSection" class="panel chart-panel">
+        <h2>Training curves</h2>
+        <div class="chart-container">
+          <canvas id="lossChart" aria-label="Loss curve"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas id="rewardChart" aria-label="Episode reward"></canvas>
+        </div>
+      </section>
+
+      <section id="livePanel" class="panel">
+        <h2>CartPole live</h2>
+        <canvas id="cartpoleCanvas" width="600" height="200"></canvas>
+        <p class="hint">
+          The pole's tip color shifts from blue (stable) to red (falling). Action
+          is rendered briefly as a small arrow on the cart.
+        </p>
+      </section>
+
+      <section id="aboutSection" class="panel">
+        <h2>About</h2>
+        <p>
+          DQN (Deep Q-Network) trains a small MLP to estimate Q-values for
+          CartPole's 4D state. The agent's goal is to maximize the cumulative
+          reward by keeping the pole balanced. The target network stabilizes
+          training, and ε-greedy exploration gradually shifts toward greedy
+          exploitation.
+        </p>
+        <p class="hint">
+          See <code>src/algorithms/dqn-agent.ts</code> for the agent,
+          <code>src/envs/cartpole.ts</code> for the environment, and
+          <code>src/ui/app.ts</code> for this UI's entry point.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Provenance: extracted from
+        <a href="https://github.com/oliverlaudan-ops/AI-Idle">AI-Idle</a>'s RL
+        bot module, generalized into a standalone showcase.
+      </p>
+    </footer>
+
+    <script type="module" src="/src/ui/app.ts"></script>
+  </body>
+</html>
